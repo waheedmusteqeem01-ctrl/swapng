@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SwapNG — Marketplace</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SwapNG">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0b0b0b">
+  <meta name="application-name" content="SwapNG">
+  <meta name="description" content="Nigerian peer-to-peer marketplace">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230b0b0b'/%3E%3Cstop offset='1' stop-color='%23111a12'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23g1)'/%3E%3Crect x='6' y='6' width='500' height='500' rx='108' fill='none' stroke='%2320ff77' stroke-width='6' opacity='0.9'/%3E%3Ctext x='256' y='400' text-anchor='middle' font-family='Poppins,Arial,sans-serif' font-size='96' font-weight='800'%3E%3Ctspan fill='%23ffffff'%3ESwap%3C/tspan%3E%3Ctspan fill='%2320ff77'%3ENG%3C/tspan%3E%3C/text%3E%3C/svg%3E">
+  <link rel="manifest"
+    href='data:application/manifest+json,{"name":"SwapNG","short_name":"SwapNG","description":"Nigerian peer-to-peer marketplace","start_url":"./","scope":"./","display":"standalone","orientation":"portrait","theme_color":"%230b0b0b","background_color":"%230b0b0b"}'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- YOUR SEPARATE CSS FILE -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="offline-banner" id="offlineBanner"><i class="fa-solid fa-wifi"></i><span>You're offline — some actions may
+      not work</span></div>
+  <div class="ptr" id="ptr"><i class="fa-solid fa-arrows-rotate"></i></div>
+
+  <header class="header">
+    <a class="logo" href="./">
+      <img class="logo-img" alt="SwapNG"
+        src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230b0b0b'/%3E%3Cstop offset='1' stop-color='%23111a12'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23g1)'/%3E%3Crect x='6' y='6' width='500' height='500' rx='108' fill='none' stroke='%2320ff77' stroke-width='6' opacity='0.9'/%3E%3Ctext x='256' y='400' text-anchor='middle' font-family='Poppins,Arial,sans-serif' font-size='96' font-weight='800'%3E%3Ctspan fill='%23ffffff'%3ESwap%3C/tspan%3E%3Ctspan fill='%2320ff77'%3ENG%3C/tspan%3E%3C/text%3E%3C/svg%3E">
+      <span class="logo-text"><span>Swap</span><span class="ng">NG</span></span>
+    </a>
+    <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="searchInput"
+        placeholder="Search items..."></div>
+    <div class="header-actions">
+      <button type="button" class="icon-btn" id="favBtn" title="Saved"><i class="fa-regular fa-heart"></i><span
+          class="badge" id="favCount" style="display:none">0</span></button>
+      <button type="button" class="icon-btn" id="chatBtn" title="Messages" style="display:none"><i
+          class="fa-regular fa-comment"></i></button>
+      <button type="button" class="icon-btn" id="mapBtn" title="Map view"><i
+          class="fa-solid fa-map-location-dot"></i></button>
+      <button type="button" class="my-listings-btn" id="myListingsBtn"><i class="fa-solid fa-list"></i> My
+        Listings</button>
+      <button type="button" class="sell-btn" id="sellBtn"><i class="fa-solid fa-plus"></i> Sell</button>
+      <button type="button" class="theme-toggle" id="themeToggle"><i class="fa-solid fa-moon"
+          id="themeIcon"></i></button>
+      <div class="auth-buttons" id="authButtons" style="display:flex;gap:8px">
+        <button type="button" class="btn btn-outline" id="loginBtn"><i class="fa-solid fa-right-to-bracket"></i>
+          Login</button>
+        <button type="button" class="btn btn-primary" id="signupBtn"><i class="fa-solid fa-user-plus"></i> Sign
+          Up</button>
+      </div>
+      <div class="user-chip" id="userChip">
+        <i class="fa-solid fa-circle-user"></i>
+        <span id="userEmail">user@swapng.com</span>
+        <button type="button" class="btn btn-sm" id="logoutBtn" style="background:transparent;color:var(--brand)"><i
+            class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="categories-wrapper">
+    <div class="categories" id="categoriesContainer">
+      <button type="button" class="cat-btn active" data-category="all"><i class="fa-solid fa-layer-group"></i>
+        All</button>
+      <button type="button" class="cat-btn" data-category="phones"><i class="fa-solid fa-mobile-screen"></i>
+        Phones</button>
+      <button type="button" class="cat-btn" data-category="jerseys"><i class="fa-solid fa-tshirt"></i> Jerseys</button>
+      <button type="button" class="cat-btn" data-category="shoes"><i class="fa-solid fa-shoe-prints"></i> Shoes</button>
+      <button type="button" class="cat-btn" data-category="electronics"><i class="fa-solid fa-laptop"></i>
+        Electronics</button>
+      <button type="button" class="cat-btn" data-category="cars"><i class="fa-solid fa-car"></i> Cars</button>
+      <button type="button" class="cat-btn" data-category="fashion"><i class="fa-solid fa-vest"></i> Fashion</button>
+      <button type="button" class="cat-btn" data-category="properties"><i class="fa-solid fa-house"></i>
+        Properties</button>
+      <button type="button" class="cat-btn" data-category="books"><i class="fa-solid fa-book"></i> Books</button>
+    </div>
+  </div>
+
+  <main class="container">
+    <div id="trendingWrap"></div>
+    <div id="recentlyViewedWrap"></div>
+    <h2 class="section-title" id="sectionTitle">All <span>Listings</span></h2>
+    <div class="result-count" id="resultCount"></div>
+    <div class="active-filters" id="activeFilters"></div>
+    <div class="toolbar">
+      <div class="toolbar-left desktop-filters">
+        <select id="sortSelect">
+          <option value="newest">Newest first</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="rating-desc">Rating: High → Low</option>
+          <option value="title-asc">Title: A → Z</option>
+        </select>
+        <div class="price-range"><input type="number" id="priceMin" placeholder="Min ₦"><span>—</span><input
+            type="number" id="priceMax" placeholder="Max ₦"></div>
+        <select id="locationFilter">
+          <option value="">All locations</option>
+        </select>
+        <select id="sellerFilter">
+          <option value="">All sellers</option>
+        </select>
+        <select id="ratingFilter">
+          <option value="">Any rating</option>
+          <option value="3">3★ & up</option>
+          <option value="4">4★ & up</option>
+          <option value="4.5">4.5★ & up</option>
+        </select>
+        <select id="conditionFilter">
+          <option value="">Any condition</option>
+          <option value="new">Brand new</option>
+          <option value="like-new">Like new</option>
+          <option value="used">Used</option>
+        </select>
+        <label class="verified-toggle" id="verifiedToggle"><input type="checkbox" id="verifiedOnly"><span
+            class="check"><i class="fa-solid fa-check"></i></span><span><i class="fa-solid fa-circle-check"
+              style="color:#1DA1F2"></i> Verified only</span></label>
+      </div>
+      <div class="toolbar-right">
+        <button type="button" class="mobile-filter-toggle" id="mobileFilterToggle"><i class="fa-solid fa-sliders"></i>
+          Filters</button>
+        <button type="button" class="btn btn-outline btn-sm" id="clearFilters"><i class="fa-solid fa-xmark"></i>
+          Clear</button>
+      </div>
+    </div>
+    <div class="grid" id="marketplaceGrid"></div>
+  </main>
+
+  <div class="mobile-filter-drawer" id="mobileFilterDrawer">
+    <div class="mobile-filter-panel">
+      <div class="drawer-handle"></div>
+      <div class="drawer-title"><i class="fa-solid fa-sliders"></i> Filters</div>
+      <div class="form-group"><label>Sort</label><select id="sortSelectMobile">
+          <option value="newest">Newest first</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="rating-desc">Rating: High → Low</option>
+          <option value="title-asc">Title: A → Z</option>
+        </select></div>
+      <div class="form-group"><label>Price range</label>
+        <div class="price-range" style="width:100%"><input type="number" id="priceMinMobile" placeholder="Min ₦"
+            style="flex:1"><span>—</span><input type="number" id="priceMaxMobile" placeholder="Max ₦" style="flex:1">
+        </div>
+      </div>
+      <div class="form-group"><label>Location</label><select id="locationFilterMobile">
+          <option value="">All locations</option>
+        </select></div>
+      <div class="form-group"><label>Seller</label><select id="sellerFilterMobile">
+          <option value="">All sellers</option>
+        </select></div>
+      <div class="form-group"><label>Rating</label><select id="ratingFilterMobile">
+          <option value="">Any rating</option>
+          <option value="3">3★ & up</option>
+          <option value="4">4★ & up</option>
+          <option value="4.5">4.5★ & up</option>
+        </select></div>
+      <div class="form-group"><label>Condition</label><select id="conditionFilterMobile">
+          <option value="">Any</option>
+          <option value="new">Brand new</option>
+          <option value="like-new">Like new</option>
+          <option value="used">Used</option>
+        </select></div>
+      <div class="form-group"><label class="verified-toggle" style="width:100%;justify-content:flex-start"><input
+            type="checkbox" id="verifiedOnlyMobile"><span class="check"><i class="fa-solid fa-check"></i></span><span><i
+              class="fa-solid fa-circle-check" style="color:#1DA1F2"></i> Verified only</span></label></div>
+      <div class="drawer-actions"><button type="button" class="btn btn-outline" id="mobileFilterClear">Clear
+          all</button><button type="button" class="btn btn-primary" id="mobileFilterApply">Apply</button></div>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal"><button type="button" class="modal-close" data-close="loginModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2>Welcome back</h2>
+      <p class="sub">Log in to your SwapNG account</p>
+      <form id="loginForm">
+        <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com"
+            required></div>
+        <div class="form-group"><label>Password</label><input type="password" id="loginPassword" required></div><button
+          type="submit" class="btn btn-primary" id="loginSubmit"><i class="fa-solid fa-right-to-bracket"></i> Log
+          In</button>
+      </form>
+      <div class="modal-switch">No account? <a data-switch="signup">Sign up</a></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="signupModal">
+    <div class="modal"><button type="button" class="modal-close" data-close="signupModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2>Create account</h2>
+      <p class="sub">Join SwapNG</p>
+      <form id="signupForm">
+        <div class="form-group"><label>Full Name</label><input type="text" id="signupName" required></div>
+        <div class="form-group"><label>Email</label><input type="email" id="signupEmail" required></div>
+        <div class="form-group"><label>Password</label><input type="password" id="signupPassword" minlength="6"
+            required></div><button type="submit" class="btn btn-primary" id="signupSubmit"><i
+            class="fa-solid fa-user-plus"></i> Sign Up</button>
+      </form>
+      <div class="modal-switch">Have an account? <a data-switch="login">Log in</a></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="sellerModal">
+    <div class="modal"><button type="button" class="modal-close" data-close="sellerModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2>Become a Seller</h2>
+      <p class="sub">Set up your seller account</p>
+      <form id="sellerForm">
+        <div class="form-group"><label>Full Name</label><input type="text" id="sellerName" required maxlength="60">
+        </div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" id="sellerPhone" required maxlength="20">
+        </div>
+        <div class="form-group"><label>Location</label><input type="text" id="sellerLocation" required maxlength="40">
+        </div><button type="submit" class="btn btn-primary" id="sellerSubmit"><i class="fa-solid fa-store"></i> Create
+          Seller Account</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="sellModal">
+    <div class="modal wide"><button type="button" class="modal-close" data-close="sellModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2 id="sellModalTitle">Post a listing</h2>
+      <p class="sub" id="sellModalSub">Sell your item on SwapNG</p>
+      <form id="sellForm">
+        <div class="form-group"><label>Photos (up to 5)</label>
+          <div class="uploader" id="uploader"></div><input type="file" id="fileInput" accept="image/*" multiple hidden>
+        </div>
+        <div class="form-group"><label>Item Title</label><input type="text" id="sellTitle" required maxlength="80">
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Price</label><input type="text" id="sellPrice" required maxlength="20"
+              inputmode="numeric"></div>
+          <div class="form-group"><label>Category</label><select id="sellCategory" required>
+              <option value="">Select...</option>
+              <option value="phones">Phones</option>
+              <option value="jerseys">Jerseys</option>
+              <option value="shoes">Shoes</option>
+              <option value="electronics">Electronics</option>
+              <option value="cars">Cars</option>
+              <option value="fashion">Fashion</option>
+              <option value="properties">Properties</option>
+              <option value="books">Books</option>
+            </select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Condition</label><select id="sellCondition">
+              <option value="used">Used</option>
+              <option value="like-new">Like new</option>
+              <option value="new">Brand new</option>
+            </select></div>
+          <div class="form-group"><label>Price type</label><select id="sellNegotiable">
+              <option value="no">Fixed price</option>
+              <option value="yes">Negotiable</option>
+            </select></div>
+        </div>
+        <div class="form-group"><label>WhatsApp Number</label><input type="tel" id="sellPhone" required maxlength="20">
+        </div>
+        <div class="form-group"><label>Location</label><input type="text" id="sellLocation" required maxlength="40">
+        </div>
+        <div class="form-group"><label>Description <button type="button" class="btn btn-sm btn-outline" id="aiDescBtn"
+              style="margin-left:6px;font-size:.7rem;padding:3px 10px"><i class="fa-solid fa-wand-magic-sparkles"></i>
+              AI write</button></label><textarea id="sellDescription" maxlength="500"></textarea></div>
+        <button type="submit" class="btn btn-primary" id="sellSubmit"><i class="fa-solid fa-upload"></i> <span
+            id="sellSubmitText">Post Listing</span></button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal wide"><button type="button" class="modal-close" data-close="detailModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <div class="detail-hero" id="detailHero"></div>
+      <div class="detail-title" id="detailTitle"></div>
+      <div class="detail-price" id="detailPrice"></div>
+      <div class="detail-meta" id="detailMeta"></div>
+      <div class="detail-desc" id="detailDescription"></div>
+      <div class="detail-seller" id="detailSellerBox">
+        <div class="detail-seller-avatar" id="detailSellerAvatar">S</div>
+        <div class="detail-seller-info">
+          <div class="detail-seller-name" id="detailSellerName"></div>
+          <div class="detail-seller-sub" id="detailSellerSub"></div>
+        </div><i class="fa-solid fa-chevron-right" style="color:var(--text-muted)"></i>
+      </div>
+      <div class="seller-action-row"><button type="button" class="btn btn-whatsapp" id="contactSellerBtn"><i
+            class="fa-brands fa-whatsapp"></i> Contact on WhatsApp</button></div>
+      <div class="detail-actions-grid three"><button type="button" class="detail-action-btn" id="chatSellerBtn"><i
+            class="fa-solid fa-comment"></i> Chat</button><button type="button" class="detail-action-btn"
+          id="shareBtn"><i class="fa-solid fa-share-nodes"></i> Share</button><button type="button"
+          class="detail-action-btn" id="swapOfferBtn"><i class="fa-solid fa-right-left"></i> Swap</button></div>
+      <div class="detail-actions-grid two" id="ownerActions" style="display:none"><button type="button"
+          class="detail-action-btn" id="markSoldBtn"><i class="fa-solid fa-circle-check"></i> <span>Mark
+            sold</span></button><button type="button" class="detail-action-btn" id="editFromDetailBtn"><i
+            class="fa-solid fa-pen"></i> Edit</button><button type="button" class="detail-action-btn danger"
+          id="deleteFromDetailBtn" style="grid-column:1/-1"><i class="fa-solid fa-trash"></i> Delete</button></div>
+      <div class="detail-actions-grid two"><button type="button" class="detail-action-btn danger" id="reportBtn"><i
+            class="fa-solid fa-flag"></i> Report</button><button type="button" class="detail-action-btn"
+          id="favToggleBtn"><i class="fa-regular fa-heart"></i> <span>Save</span></button></div>
+      <div id="verifyBannerWrap"></div>
+      <div class="reviews-section">
+        <div class="reviews-header">
+          <div class="reviews-title"><i class="fa-solid fa-star" style="color:var(--star)"></i> Reviews</div>
+        </div>
+        <div id="reviewsSummaryWrap"></div>
+        <div id="reviewFormWrap"></div>
+        <div class="review-list" id="reviewList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="myListingsModal">
+    <div class="modal wide"><button type="button" class="modal-close" data-close="myListingsModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2>My Listings</h2>
+      <p class="sub">Manage your listings</p>
+      <div id="mySellerBanner"></div>
+      <div class="my-listings-list" id="myListingsList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="verifyRequestModal">
+    <div class="modal"><button type="button" class="modal-close" data-close="verifyRequestModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2>Get Verified</h2>
+      <p class="sub">Request the blue badge</p>
+      <form id="verifyRequestForm">
+        <div class="form-group"><label>Full Name</label><input type="text" id="verifyName" required maxlength="80">
+        </div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" id="verifyPhone" required maxlength="20">
+        </div>
+        <div class="form-group"><label>Location</label><input type="text" id="verifyLocation" required maxlength="60">
+        </div>
+        <div class="form-group"><label>Why? (optional)</label><textarea id="verifyNotes" maxlength="300"></textarea>
+        </div><button type="submit" class="btn btn-primary" id="verifyRequestSubmit"><i
+            class="fa-solid fa-paper-plane"></i> Submit Request</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal"><button type="button" class="modal-close" data-close="reportModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2>Report listing</h2>
+      <p class="sub">Help keep SwapNG safe</p>
+      <form id="reportForm">
+        <div class="form-group"><label>Reason</label><select id="reportReason" required>
+            <option value="">Select...</option>
+            <option value="scam">Scam / fraud</option>
+            <option value="wrong-category">Wrong category</option>
+            <option value="sold">Item already sold</option>
+            <option value="offensive">Offensive content</option>
+            <option value="duplicate">Duplicate listing</option>
+            <option value="other">Other</option>
+          </select></div>
+        <div class="form-group"><label>Details (optional)</label><textarea id="reportNotes" maxlength="300"></textarea>
+        </div><button type="submit" class="btn btn-primary" id="reportSubmit"><i class="fa-solid fa-flag"></i> Submit
+          Report</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="sellerProfileModal">
+    <div class="modal wide"><button type="button" class="modal-close" data-close="sellerProfileModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <div id="sellerProfileContent"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="favModal">
+    <div class="modal wide"><button type="button" class="modal-close" data-close="favModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2><i class="fa-solid fa-heart" style="color:var(--danger)"></i> Saved Items</h2>
+      <p class="sub">Items you've saved for later</p>
+      <div class="my-listings-list" id="favList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="chatListModal">
+    <div class="modal wide"><button type="button" class="modal-close" data-close="chatListModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2><i class="fa-solid fa-comment"></i> Messages</h2>
+      <p class="sub">Your conversations</p>
+      <div class="chat-list" id="chatListEl"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="chatModal">
+    <div class="modal wide"><button type="button" class="modal-close" data-close="chatModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <div class="chat-window">
+        <div class="chat-header">
+          <div class="av" id="chatAv">S</div>
+          <div class="info">
+            <div class="name" id="chatName">Seller</div>
+            <div class="sub" id="chatSub">Item</div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input"><input type="text" id="chatInput" placeholder="Type a message..."
+            maxlength="500"><button type="button" id="chatSend"><i class="fa-solid fa-paper-plane"></i></button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="mapModal">
+    <div class="modal xwide"><button type="button" class="modal-close" data-close="mapModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2><i class="fa-solid fa-map-location-dot"></i> Map View</h2>
+      <p class="sub">Listings by location</p>
+      <div class="map-wrap">
+        <div id="mapView"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="swapModal">
+    <div class="modal"><button type="button" class="modal-close" data-close="swapModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2><i class="fa-solid fa-right-left"></i> Swap Offer</h2>
+      <p class="sub">Offer your item + optional cash</p>
+      <form id="swapForm">
+        <div class="form-group"><label>Your item</label><select id="swapMyItem" required></select></div>
+        <div class="form-group"><label>Cash on top (₦, optional)</label><input type="number" id="swapCash" min="0"
+            placeholder="0"></div>
+        <div class="form-group"><label>Message (optional)</label><textarea id="swapMsg" maxlength="300"></textarea>
+        </div><button type="submit" class="btn btn-primary" id="swapSubmit"><i class="fa-solid fa-paper-plane"></i> Send
+          Swap Offer</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal xwide"><button type="button" class="modal-close" data-close="adminModal"><i
+          class="fa-solid fa-xmark"></i></button>
+      <h2><i class="fa-solid fa-shield-halved"></i> Admin Dashboard</h2>
+      <p class="sub">Manage listings, reports, verifications</p>
+      <div class="admin-stats" id="adminStats"></div>
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><button type="button"
+          class="btn btn-sm btn-outline" data-admin-tab="reports">Reports</button><button type="button"
+          class="btn btn-sm btn-outline" data-admin-tab="verifications">Verifications</button><button type="button"
+          class="btn btn-sm btn-outline" data-admin-tab="listings">Listings</button></div>
+      <div class="admin-list" id="adminList"></div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <button type="button" class="support-fab" id="supportFab"><i class="fa-solid fa-comments"></i></button>
+  <button type="button" class="bottom-fab" id="fabNew" style="display:none"><i class="fa-solid fa-plus"></i></button>
+
+  <div class="support-panel" id="supportPanel">
+    <div class="support-window">
+      <div class="support-header">
+        <div class="avatar"><i class="fa-solid fa-headset"></i></div>
+        <div class="info">
+          <div class="name">SwapNG Support</div>
+          <div class="status"><span class="dot"></span> Online</div>
+        </div><button type="button" class="close-btn" id="supportClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="support-quick-topics" id="supportQuickTopics"><button type="button" data-topic="listing">📱 My
+          listing</button><button type="button" data-topic="seller">🛒 Contact seller</button><button type="button"
+          data-topic="review">⭐ Reviews</button><button type="button" data-topic="verify">✓ Verification</button><button
+          type="button" data-topic="account">👤 Account</button><button type="button" data-topic="offline">📡 Offline
+          help</button></div>
+      <div class="support-messages" id="supportMessages"></div>
+      <div class="support-input-row"><input type="text" id="supportInput" placeholder="Ask SwapNG Support..."
+          maxlength="500"><button type="button" id="supportSend"><i class="fa-solid fa-paper-plane"></i></button></div>
+    </div>
+  </div>
+
+  <!-- YOUR SEPARATE JS FILE -->
+  <script type="module" src="app.js"></script>
+</body>
+
+</html>
